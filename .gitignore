@@ -16,5 +16,6 @@ routes.py
 run.py
 test.txt
 yolov11l-face.pt
+.vscode/
 
 
