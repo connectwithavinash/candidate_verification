@@ -79,22 +79,38 @@ class QdrantConnection:
         
         except Exception as e:
             print(e)
+    
+    async def upload_points_to_collection(self,collection_name, payload):
+        pass
 
-    async def batch_upload_points(self, collection_name,):
+    async def batch_upload_points_to_collection(self, collection_name, payload):
         try:
-            await self.client.upsert(
+            operation_info = await self.client.upsert(
                 collection_name=collection_name,
-                points = models.Batch(
-                    payloads=[],
-                    vectors=[]
-
+                wait=True,
+                points=models.Batch(
+                    ids=payload.get('ids'),
+                    vectors=payload.get('vectors'),
+                    payloads=payload.get('payload')
                 )
             )
+            return operation_info
         except Exception as e:
-            print(e)
+            print(f"Error uploading points: {e}")
     
-    async def upload_points_to_collection(self,collection_name):
-        pass
+    async def query_collection(self, collection_name, query_vector: list):
+        try:
+            search_result = await self.client.query_points(
+                    collection_name=collection_name,
+                    query=query_vector,
+                    with_payload=True,
+                    limit=3
+                )
+            
+            return search_result.points
+        
+        except Exception as e:
+              print(f"Error querying collection: {e}")
 
     async def batch_upload_points_to_collection(self, collection_name, payload):
         try:
